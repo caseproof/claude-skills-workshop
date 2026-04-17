@@ -14,6 +14,10 @@ Single-page HTML deck covering:
 - Packaging `.skill` files
 - Live demo: the `support-reply-writer` skill
 
+## Download the demo skill
+
+[`support-reply-writer.skill`](./support-reply-writer.skill) — the packaged skill file from the workshop. Upload it directly to Claude.
+
 ## Local preview
 
 ```
