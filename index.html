@@ -1,0 +1,2595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Skills — Caseproof Team Retreat 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ========================================================
+     TOKENS
+     ======================================================== */
+  :root {
+    --ink:        #0B1220;
+    --ink-raise: #131B2C;
+    --bone:       #E8DFCF;
+    --bone-dim:   #B8AF9F;
+    --dust:       #6E6A5E;
+    --amber:      #E8A04B;
+    --amber-dim:  #8A5F2C;
+    --sage:       #8FAD9A;
+    --sage-dim:   #3F5147;
+    --terracotta: #D17558;
+    --terracotta-dim: #6A3A2C;
+    --line:       rgba(232, 223, 207, 0.12);
+    --line-soft:  rgba(232, 223, 207, 0.06);
+
+    --f-display:  'Fraunces', Georgia, serif;
+    --f-body:     'Geist', -apple-system, sans-serif;
+    --f-mono:     'Geist Mono', 'SF Mono', Menlo, monospace;
+
+    --pad-x: clamp(40px, 6vw, 112px);
+    --pad-y: clamp(40px, 6vh, 88px);
+  }
+
+  /* ========================================================
+     RESET & BASE
+     ======================================================== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    background: var(--ink);
+    color: var(--bone);
+    font-family: var(--f-body);
+    font-weight: 400;
+    font-feature-settings: "ss01", "ss02", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
+  }
+  body {
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(232, 160, 75, 0.06), transparent 50%),
+      radial-gradient(ellipse at 100% 100%, rgba(143, 173, 154, 0.05), transparent 50%);
+  }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--amber); color: var(--ink); }
+
+  /* ========================================================
+     DECK STRUCTURE
+     ======================================================== */
+  .deck {
+    position: fixed;
+    inset: 0;
+    perspective: 1000px;
+  }
+  .slide {
+    position: absolute;
+    inset: 0;
+    padding: var(--pad-y) var(--pad-x) calc(var(--pad-y) + 24px);
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 420ms cubic-bezier(.2, .6, .2, 1);
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(232, 223, 207, 0.2) transparent;
+  }
+  .slide::-webkit-scrollbar {
+    width: 8px;
+  }
+  .slide::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .slide::-webkit-scrollbar-thumb {
+    background: rgba(232, 223, 207, 0.15);
+    border-radius: 4px;
+  }
+  .slide::-webkit-scrollbar-thumb:hover {
+    background: rgba(232, 223, 207, 0.3);
+  }
+  .slide.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .slide.active .reveal {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 640ms cubic-bezier(.2, .6, .2, 1),
+                transform 640ms cubic-bezier(.2, .6, .2, 1);
+  }
+  .slide.active .reveal:nth-child(1) { transition-delay: 60ms; }
+  .slide.active .reveal:nth-child(2) { transition-delay: 180ms; }
+  .slide.active .reveal:nth-child(3) { transition-delay: 300ms; }
+  .slide.active .reveal:nth-child(4) { transition-delay: 420ms; }
+  .slide.active .reveal:nth-child(5) { transition-delay: 540ms; }
+  .slide.active .reveal:nth-child(6) { transition-delay: 660ms; }
+  .slide.active .reveal:nth-child(n+7) { transition-delay: 780ms; }
+
+  /* ========================================================
+     CHROME: PROGRESS / META / HELP
+     ======================================================== */
+  .progress {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--line-soft);
+    z-index: 50;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--amber);
+    transition: width 420ms cubic-bezier(.2, .6, .2, 1);
+    box-shadow: 0 0 12px rgba(232, 160, 75, 0.4);
+  }
+
+  .meta {
+    position: fixed;
+    z-index: 40;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--dust);
+    user-select: none;
+  }
+  .meta-tl { top: 20px; left: var(--pad-x); }
+  .meta-tr { top: 20px; right: var(--pad-x); }
+  .meta-bl { bottom: 20px; left: var(--pad-x); }
+  .meta-br {
+    bottom: 20px; right: var(--pad-x);
+    cursor: pointer;
+    transition: color 200ms;
+  }
+  .meta-br:hover { color: var(--amber); }
+  .meta-tr .count-cur { color: var(--bone); }
+
+  .nav-arrows {
+    position: fixed;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    z-index: 40;
+  }
+  .nav-btn {
+    width: 34px; height: 34px;
+    display: grid; place-items: center;
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--bone-dim);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 180ms;
+    font-family: var(--f-mono);
+    font-size: 14px;
+  }
+  .nav-btn:hover {
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+
+  /* Help panel */
+  .panel {
+    position: fixed;
+    inset: 0;
+    background: rgba(11, 18, 32, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+  }
+  .panel.open { display: flex; }
+  .panel-card {
+    max-width: 520px;
+    width: 100%;
+    padding: 40px;
+    border: 1px solid var(--line);
+    background: var(--ink-raise);
+  }
+  .panel-card h2 {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: 28px;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+  .shortcut-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-top: 1px solid var(--line-soft);
+    font-size: 14px;
+  }
+  .shortcut-row:first-of-type { border-top: none; }
+  .kbd {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    background: var(--ink);
+    border: 1px solid var(--line);
+    padding: 3px 8px;
+    color: var(--amber);
+  }
+
+  /* Speaker notes drawer */
+  .notes {
+    position: fixed;
+    right: 0; top: 0; bottom: 0;
+    width: min(420px, 40vw);
+    background: var(--ink-raise);
+    border-left: 1px solid var(--line);
+    padding: 60px 32px 32px;
+    transform: translateX(100%);
+    transition: transform 280ms cubic-bezier(.2, .6, .2, 1);
+    z-index: 60;
+    overflow-y: auto;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--bone-dim);
+  }
+  .notes.open { transform: translateX(0); }
+  .notes-eyebrow {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 10px;
+  }
+  .notes h3 {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    color: var(--bone);
+    margin-bottom: 20px;
+  }
+  .notes p { margin-bottom: 14px; }
+  .notes em { color: var(--amber); font-style: normal; }
+  .notes code {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    background: var(--ink);
+    padding: 2px 6px;
+    color: var(--bone);
+  }
+
+  /* ========================================================
+     TYPOGRAPHY PRIMITIVES
+     ======================================================== */
+  .eyebrow {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 28px;
+  }
+  .display {
+    font-family: var(--f-display);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+    font-variation-settings: "opsz" 144;
+  }
+  .display em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--amber);
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.5;
+    color: var(--bone-dim);
+    max-width: 64ch;
+  }
+  .micro {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--dust);
+  }
+  .rule {
+    width: 56px;
+    height: 1px;
+    background: var(--amber);
+    margin: 32px 0;
+  }
+
+  /* ========================================================
+     SLIDE 1 — TITLE
+     ======================================================== */
+  .s-title {
+    justify-content: safe center;
+    align-items: flex-start;
+  }
+  .s-title .kicker {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 40px;
+  }
+  .s-title h1 {
+    font-family: var(--f-display);
+    font-weight: 300;
+    font-variation-settings: "opsz" 144;
+    font-size: clamp(72px, 12vw, 196px);
+    letter-spacing: -0.04em;
+    line-height: 0.92;
+    color: var(--bone);
+  }
+  .s-title h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--amber);
+  }
+  .s-title .sub {
+    font-family: var(--f-display);
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(22px, 2.6vw, 38px);
+    color: var(--bone-dim);
+    margin-top: 28px;
+    max-width: 20ch;
+  }
+  .s-title .byline {
+    margin-top: auto;
+    padding-top: 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    width: 100%;
+    border-top: 1px solid var(--line);
+    font-family: var(--f-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--dust);
+  }
+  .s-title .byline .names { color: var(--bone); }
+
+  /* ========================================================
+     SLIDE 2 — PROBLEM (BEFORE / AFTER)
+     ======================================================== */
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    flex: 1;
+    align-items: start;
+  }
+  .s-problem h2 {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: clamp(38px, 4.5vw, 64px);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 48px;
+  }
+  .col-header {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .col-before .col-header { color: var(--terracotta); }
+  .col-after .col-header { color: var(--sage); }
+  .col ol, .col ul {
+    list-style: none;
+    padding: 0;
+  }
+  .col ol li {
+    display: flex;
+    gap: 14px;
+    font-size: 18px;
+    line-height: 1.5;
+    padding: 10px 0;
+    border-top: 1px solid var(--line-soft);
+    color: var(--bone);
+  }
+  .col ol li:first-child { border-top: none; }
+  .col ol li .n {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    color: var(--dust);
+    min-width: 20px;
+    padding-top: 4px;
+  }
+  .col-before ol li:last-child {
+    color: var(--terracotta);
+    font-style: italic;
+  }
+  .col-after ol li:last-child {
+    color: var(--sage);
+    font-weight: 500;
+  }
+  .cost-block {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+  .cost-label {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .col-before .cost-label { color: var(--terracotta); }
+  .col-after .cost-label { color: var(--sage); }
+  .cost-block ul li {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--bone-dim);
+    padding: 6px 0;
+  }
+
+  /* ========================================================
+     SLIDE 3 — ONE LINE
+     ======================================================== */
+  .s-oneliner {
+    justify-content: safe center;
+    align-items: center;
+    text-align: center;
+  }
+  .s-oneliner .quote {
+    font-family: var(--f-display);
+    font-weight: 300;
+    font-variation-settings: "opsz" 144;
+    font-size: clamp(36px, 5.6vw, 78px);
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    max-width: 22ch;
+    color: var(--bone);
+  }
+  .s-oneliner .quote em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--amber);
+  }
+  .s-oneliner .sub {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(18px, 1.8vw, 24px);
+    color: var(--bone-dim);
+    margin-top: 40px;
+    max-width: 38ch;
+  }
+  .trio {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 220px));
+    gap: 24px;
+    margin-top: 72px;
+  }
+  .trio-card {
+    padding: 28px 24px;
+    border: 1px solid var(--line);
+    text-align: left;
+  }
+  .trio-card.highlighted {
+    border-color: var(--amber);
+    background: rgba(232, 160, 75, 0.04);
+  }
+  .trio-card h4 {
+    font-family: var(--f-display);
+    font-weight: 500;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+  .trio-card.highlighted h4 { color: var(--amber); }
+  .trio-card p {
+    font-size: 13px;
+    color: var(--bone-dim);
+    line-height: 1.5;
+  }
+
+  /* ========================================================
+     SLIDE 4 — HOW IT WORKS
+     ======================================================== */
+  .s-how h2 {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: clamp(38px, 4.5vw, 64px);
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+  .s-how .lede { margin-bottom: 64px; }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .step {
+    padding: 36px 28px 36px 0;
+    border-right: 1px solid var(--line-soft);
+    position: relative;
+  }
+  .step:last-child { border-right: none; }
+  .step-num {
+    font-family: var(--f-display);
+    font-weight: 300;
+    font-variation-settings: "opsz" 144;
+    font-size: 72px;
+    line-height: 1;
+    color: var(--amber);
+    margin-bottom: 16px;
+  }
+  .step h4 {
+    font-family: var(--f-display);
+    font-weight: 500;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+    color: var(--bone);
+  }
+  .step p {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--bone-dim);
+  }
+  .disclosure {
+    margin-top: 40px;
+    padding: 24px 28px;
+    border-left: 2px solid var(--amber);
+    background: rgba(232, 160, 75, 0.04);
+  }
+  .disclosure h5 {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 10px;
+  }
+  .disclosure p {
+    font-size: 15px;
+    color: var(--bone-dim);
+    line-height: 1.55;
+    max-width: 80ch;
+  }
+
+  /* ========================================================
+     SLIDE 5 — A SKILL IN ACTION (DEMO)
+     ======================================================== */
+  .s-action h2 {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: clamp(38px, 4.5vw, 64px);
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .s-action .lede { margin-bottom: 32px; }
+  .demo {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: stretch;
+  }
+  .terminal {
+    background: #060A13;
+    border: 1px solid var(--line);
+    padding: 0;
+    font-family: var(--f-mono);
+    font-size: 13px;
+    line-height: 1.7;
+    display: flex;
+    flex-direction: column;
+  }
+  .terminal-bar {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line-soft);
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .terminal-bar::before,
+  .terminal-bar::after {
+    content: '';
+    display: block;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--line);
+  }
+  .terminal-bar::before { background: #3d3832; }
+  .terminal-bar span {
+    margin-left: auto;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--dust);
+  }
+  .terminal-body {
+    padding: 20px;
+    flex: 1;
+    overflow: hidden;
+  }
+  .term-line { margin-bottom: 4px; color: var(--bone-dim); }
+  .term-prompt { color: var(--amber); }
+  .term-user { color: var(--bone); }
+  .term-sys { color: var(--dust); font-size: 12px; }
+  .term-match { color: var(--sage); }
+  .term-output {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line);
+    color: var(--bone);
+    font-family: var(--f-body);
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+  .beats {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 24px;
+  }
+  .beat {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    opacity: 0.4;
+    transition: opacity 400ms;
+  }
+  .beat.lit { opacity: 1; }
+  .beat-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 1px solid var(--bone-dim);
+    margin-top: 8px;
+    flex-shrink: 0;
+    transition: all 400ms;
+  }
+  .beat.lit .beat-dot {
+    background: var(--amber);
+    border-color: var(--amber);
+    box-shadow: 0 0 16px rgba(232, 160, 75, 0.6);
+  }
+  .beat h4 {
+    font-family: var(--f-display);
+    font-weight: 500;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+    color: var(--bone);
+  }
+  .beat p {
+    font-size: 14px;
+    color: var(--bone-dim);
+    line-height: 1.55;
+  }
+  .action-footer {
+    margin-top: 28px;
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: 20px;
+    color: var(--amber);
+  }
+
+  /* ========================================================
+     SLIDE 6 — THREE TYPES
+     ======================================================== */
+  .s-types h2 {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: clamp(38px, 4.5vw, 64px);
+    letter-spacing: -0.02em;
+    margin-bottom: 48px;
+  }
+  .types-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    flex: 1;
+  }
+  .type-card {
+    padding: 40px 32px;
+    border: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+  }
+  .type-card.featured {
+    border-color: var(--amber);
+    background: rgba(232, 160, 75, 0.05);
+  }
+  .type-card .tag {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dust);
+    margin-bottom: 24px;
+  }
+  .type-card.featured .tag { color: var(--amber); }
+  .type-card h3 {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: 36px;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+  .type-card.featured h3 { color: var(--amber); }
+  .type-card ul {
+    list-style: none;
+  }
+  .type-card ul li {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--bone-dim);
+    padding: 6px 0;
+    border-top: 1px solid var(--line-soft);
+  }
+  .type-card ul li:first-child { border-top: none; }
+  .type-card .flourish {
+    margin-top: auto;
+    padding-top: 24px;
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: 15px;
+    color: var(--bone);
+  }
+  .plan-line {
+    margin-top: 40px;
+    text-align: center;
+    font-family: var(--f-mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dust);
+  }
+
+  /* ========================================================
+     SLIDE 7 — GOOD vs BAD
+     ======================================================== */
+  .s-goodbad h2 {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: clamp(38px, 4.5vw, 64px);
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .s-goodbad .lede { margin-bottom: 48px; }
+  .gb-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 56px;
+    flex: 1;
+  }
+  .gb-row {
+    display: contents;
+  }
+  .gb-cell {
+    padding: 20px 0;
+    border-top: 1px solid var(--line-soft);
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .gb-cell .mark {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    min-width: 80px;
+    padding-top: 3px;
+  }
+  .gb-bad .mark { color: var(--terracotta); }
+  .gb-good .mark { color: var(--sage); }
+  .gb-cell .text {
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--bone);
+  }
+  .gb-bad .text { color: var(--bone-dim); }
+
+  /* ========================================================
+     SLIDES 8/9/10 — TEAM EXAMPLES
+     ======================================================== */
+  .s-team h2 {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: clamp(38px, 4.5vw, 64px);
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .s-team .team-eyebrow {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 20px;
+  }
+  .s-team .lede { margin-bottom: 48px; }
+  .team-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    flex: 1;
+    align-content: start;
+  }
+  .team-card {
+    padding: 28px;
+    border: 1px solid var(--line);
+    transition: border-color 200ms;
+  }
+  .team-card:hover { border-color: rgba(232, 160, 75, 0.3); }
+  .team-card h4 {
+    font-family: var(--f-display);
+    font-weight: 500;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    margin-bottom: 10px;
+    color: var(--amber);
+  }
+  .team-card p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--bone-dim);
+  }
+  .team-footer {
+    margin-top: 36px;
+    padding: 20px 24px;
+    border-left: 2px solid var(--sage);
+    background: rgba(143, 173, 154, 0.04);
+    font-size: 15px;
+    color: var(--bone);
+  }
+  .team-footer strong {
+    color: var(--sage);
+    font-weight: 500;
+  }
+
+  /* ========================================================
+     SLIDE 11 — COMPOUNDING WIN
+     ======================================================== */
+  .s-compound {
+    justify-content: safe center;
+    align-items: center;
+    text-align: center;
+  }
+  .s-compound .quote {
+    font-family: var(--f-display);
+    font-weight: 300;
+    font-variation-settings: "opsz" 144;
+    font-size: clamp(40px, 5.4vw, 76px);
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    max-width: 24ch;
+  }
+  .s-compound .quote em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--amber);
+  }
+  .compound-list {
+    margin: 64px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    font-size: clamp(16px, 1.6vw, 20px);
+  }
+  .compound-list .row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 32px;
+    align-items: center;
+  }
+  .compound-list .label { text-align: right; color: var(--bone-dim); font-style: italic; font-family: var(--f-display); font-weight: 300; }
+  .compound-list .arrow { color: var(--amber); font-family: var(--f-mono); }
+  .compound-list .dest { text-align: left; color: var(--sage); font-weight: 500; font-family: var(--f-mono); font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .compound-closer {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(18px, 2vw, 24px);
+    color: var(--amber);
+    max-width: 44ch;
+    line-height: 1.4;
+  }
+
+  /* ========================================================
+     SLIDE 12 — FIND YOUR IDEA
+     ======================================================== */
+  .s-find h2 {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: clamp(38px, 4.5vw, 64px);
+    letter-spacing: -0.02em;
+    margin-bottom: 56px;
+  }
+  .questions {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    flex: 1;
+  }
+  .question {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 24px;
+    padding: 24px 0;
+    border-top: 1px solid var(--line);
+    align-items: start;
+  }
+  .question:last-child { border-bottom: 1px solid var(--line); }
+  .question .q-num {
+    font-family: var(--f-display);
+    font-weight: 300;
+    font-variation-settings: "opsz" 144;
+    font-size: 64px;
+    line-height: 1;
+    color: var(--amber);
+  }
+  .question .q-body h3 {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: clamp(22px, 2.4vw, 32px);
+    letter-spacing: -0.015em;
+    margin-bottom: 10px;
+    color: var(--bone);
+  }
+  .question .q-body p {
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--bone-dim);
+    max-width: 72ch;
+  }
+
+  /* ========================================================
+     SLIDE 13 — STARTER IDEAS
+     ======================================================== */
+  .s-starters h2 {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: clamp(38px, 4.5vw, 64px);
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .s-starters .lede { margin-bottom: 40px; }
+  .starter-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .starter {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 32px;
+    padding: 22px 0;
+    border-top: 1px solid var(--line);
+    align-items: baseline;
+  }
+  .starter:last-child { border-bottom: 1px solid var(--line); }
+  .starter .role {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+  .starter .prompt {
+    font-family: var(--f-mono);
+    font-size: clamp(14px, 1.3vw, 17px);
+    color: var(--sage);
+    margin-bottom: 6px;
+  }
+  .starter .desc {
+    font-size: 14px;
+    color: var(--bone-dim);
+    line-height: 1.5;
+  }
+  .s-starters .closer {
+    margin-top: 32px;
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: clamp(18px, 1.8vw, 22px);
+    color: var(--bone);
+  }
+
+  /* ========================================================
+     SLIDE 14 — SKILL.md TEMPLATE
+     ======================================================== */
+  .s-skillmd h2 {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: clamp(38px, 4.5vw, 64px);
+    letter-spacing: -0.02em;
+    margin-bottom: 32px;
+  }
+  .skillmd-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 40px;
+  }
+  .tree {
+    padding: 24px;
+    background: #060A13;
+    border: 1px solid var(--line);
+    font-family: var(--f-mono);
+    font-size: 13px;
+    line-height: 1.9;
+  }
+  .tree .dim { color: var(--dust); }
+  .tree .folder { color: var(--amber); }
+  .tree .file { color: var(--bone); }
+  .code-blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .code-block {
+    background: #060A13;
+    border: 1px solid var(--line);
+  }
+  .code-header {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--line-soft);
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+  .code-body {
+    padding: 18px 20px;
+    font-family: var(--f-mono);
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--bone);
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .code-body .key { color: var(--amber); }
+  .code-body .str { color: var(--sage); }
+  .code-body .cm { color: var(--dust); font-style: italic; }
+  .code-body .h { color: var(--amber); }
+  .skillmd-footer {
+    margin-top: 28px;
+    padding: 18px 24px;
+    border-left: 2px solid var(--amber);
+    background: rgba(232, 160, 75, 0.04);
+    font-size: 15px;
+    color: var(--bone);
+  }
+  .skillmd-footer strong { color: var(--amber); font-weight: 500; }
+
+  /* ========================================================
+     SLIDE 15 — BUILD YOUR SKILL (TIMER)
+     ======================================================== */
+  .s-build {
+    justify-content: safe center;
+    align-items: center;
+    text-align: center;
+  }
+  .s-build .eyebrow { color: var(--amber); }
+  .s-build h2 {
+    font-family: var(--f-display);
+    font-weight: 300;
+    font-variation-settings: "opsz" 144;
+    font-size: clamp(56px, 9vw, 140px);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .s-build .sub {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(20px, 2.2vw, 28px);
+    color: var(--bone-dim);
+    margin-bottom: 56px;
+  }
+  .build-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-width: 720px;
+    width: 100%;
+    margin-bottom: 40px;
+  }
+  .build-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 40px;
+    padding: 18px 0;
+    border-top: 1px solid var(--line);
+    text-align: left;
+    align-items: baseline;
+  }
+  .build-row:last-child { border-bottom: 1px solid var(--line); }
+  .build-row .when {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+  .build-row h4 {
+    font-family: var(--f-display);
+    font-weight: 500;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+    color: var(--bone);
+  }
+  .build-row p {
+    font-size: 14px;
+    color: var(--bone-dim);
+    margin-top: 2px;
+  }
+
+  .timer-wrap {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .timer-display {
+    font-family: var(--f-display);
+    font-weight: 300;
+    font-variation-settings: "opsz" 144;
+    font-size: clamp(48px, 7vw, 104px);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--bone);
+    font-variant-numeric: tabular-nums;
+    transition: color 400ms;
+  }
+  .timer-display.warn { color: var(--amber); }
+  .timer-display.alert { color: var(--terracotta); }
+  .timer-display.done { color: var(--sage); }
+  .timer-controls {
+    display: flex;
+    gap: 10px;
+  }
+  .timer-btn {
+    padding: 10px 20px;
+    background: transparent;
+    border: 1px solid var(--amber);
+    color: var(--amber);
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 180ms;
+  }
+  .timer-btn:hover {
+    background: var(--amber);
+    color: var(--ink);
+  }
+  .timer-btn.secondary {
+    border-color: var(--line);
+    color: var(--bone-dim);
+  }
+  .timer-btn.secondary:hover {
+    border-color: var(--bone);
+    background: transparent;
+    color: var(--bone);
+  }
+  .build-closer {
+    margin-top: 32px;
+    font-family: var(--f-display);
+    font-style: italic;
+    font-size: clamp(18px, 1.8vw, 22px);
+    color: var(--amber);
+  }
+
+  /* ========================================================
+     SLIDE 16 — LET'S SEE IT WORK (MOMENT)
+     ======================================================== */
+  .s-moment {
+    justify-content: safe center;
+    align-items: center;
+    text-align: center;
+  }
+  .s-moment h2 {
+    font-family: var(--f-display);
+    font-weight: 300;
+    font-variation-settings: "opsz" 144;
+    font-size: clamp(64px, 10vw, 168px);
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    margin-bottom: 48px;
+  }
+  .s-moment h2 em {
+    font-style: italic;
+    color: var(--amber);
+    font-weight: 400;
+  }
+  .s-moment .sub {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(20px, 2.2vw, 28px);
+    color: var(--bone-dim);
+    max-width: 30ch;
+    line-height: 1.4;
+  }
+  .s-moment .sub em { color: var(--amber); font-style: normal; }
+
+  /* ========================================================
+     SLIDE 17 — UPLOAD & SHARE
+     ======================================================== */
+  .s-upload h2 {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: clamp(38px, 4.5vw, 64px);
+    letter-spacing: -0.02em;
+    margin-bottom: 48px;
+  }
+  .upload-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 56px;
+  }
+  .upload-steps {
+    display: flex;
+    flex-direction: column;
+  }
+  .upload-step {
+    display: grid;
+    grid-template-columns: 56px 140px 1fr;
+    gap: 24px;
+    padding: 18px 0;
+    border-top: 1px solid var(--line);
+    align-items: baseline;
+  }
+  .upload-step:last-child { border-bottom: 1px solid var(--line); }
+  .upload-step .n {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: 40px;
+    color: var(--amber);
+    line-height: 1;
+  }
+  .upload-step h4 {
+    font-family: var(--f-display);
+    font-weight: 500;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+    color: var(--bone);
+  }
+  .upload-step p {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--bone-dim);
+  }
+  .upload-side {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .side-card {
+    padding: 24px;
+    border-left: 2px solid;
+  }
+  .side-card.gotcha { border-color: var(--terracotta); background: rgba(209, 117, 88, 0.04); }
+  .side-card.team { border-color: var(--sage); background: rgba(143, 173, 154, 0.04); }
+  .side-card h5 {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .side-card.gotcha h5 { color: var(--terracotta); }
+  .side-card.team h5 { color: var(--sage); }
+  .side-card p {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--bone);
+    margin-bottom: 10px;
+  }
+  .side-card p:last-child { margin-bottom: 0; color: var(--bone-dim); }
+  .side-card code {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    background: var(--ink-raise);
+    padding: 2px 6px;
+  }
+
+  /* ========================================================
+     SLIDE 18 — MARKETPLACE
+     ======================================================== */
+  .s-next h2 {
+    font-family: var(--f-display);
+    font-weight: 400;
+    font-size: clamp(38px, 4.5vw, 64px);
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .s-next .lede { margin-bottom: 48px; }
+  .kit-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    flex: 1;
+  }
+  .kit-card {
+    padding: 36px 32px;
+    border: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+  }
+  .kit-card h3 {
+    font-family: var(--f-display);
+    font-weight: 500;
+    font-size: 36px;
+    letter-spacing: -0.02em;
+    color: var(--amber);
+    margin-bottom: 20px;
+  }
+  .kit-card .hero {
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--bone);
+    margin-bottom: 24px;
+  }
+  .kit-card ul {
+    list-style: none;
+    margin-bottom: 24px;
+  }
+  .kit-card ul li {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--bone-dim);
+    padding-left: 16px;
+    position: relative;
+  }
+  .kit-card ul li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--amber);
+  }
+  .kit-card .addon {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--line-soft);
+    font-size: 13px;
+    color: var(--dust);
+    line-height: 1.5;
+  }
+  .kit-card .addon code {
+    font-family: var(--f-mono);
+    color: var(--bone-dim);
+    font-size: 12px;
+  }
+  .next-footer {
+    margin-top: 32px;
+    padding: 20px 24px;
+    border-left: 2px solid var(--amber);
+    background: rgba(232, 160, 75, 0.04);
+    font-size: 15px;
+    color: var(--bone);
+  }
+  .next-footer strong { color: var(--amber); font-weight: 500; }
+
+  /* ========================================================
+     SLIDE 19 — CLOSING
+     ======================================================== */
+  .s-close {
+    justify-content: safe center;
+    align-items: flex-start;
+  }
+  .s-close h2 {
+    font-family: var(--f-display);
+    font-weight: 300;
+    font-variation-settings: "opsz" 144;
+    font-size: clamp(56px, 9vw, 144px);
+    letter-spacing: -0.035em;
+    line-height: 0.98;
+  }
+  .s-close h2 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--amber);
+  }
+  .s-close h2 span {
+    display: block;
+  }
+  .s-close h2 span:nth-child(2) { padding-left: 0.6em; opacity: 0.9; }
+  .s-close h2 span:nth-child(3) { padding-left: 1.2em; }
+  .close-sub {
+    font-family: var(--f-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(18px, 2vw, 24px);
+    color: var(--bone-dim);
+    margin-top: 40px;
+    max-width: 42ch;
+    line-height: 1.4;
+  }
+  .close-foot {
+    margin-top: auto;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    width: 100%;
+    font-family: var(--f-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--dust);
+  }
+  .close-foot em {
+    color: var(--amber);
+    font-style: normal;
+  }
+
+  /* ========================================================
+     REDUCED MOTION
+     ======================================================== */
+  @media (prefers-reduced-motion: reduce) {
+    .reveal, .slide { transition: none; }
+    .reveal { opacity: 1; transform: none; }
+  }
+
+  /* ========================================================
+     MOBILE (≤ 900px) — stacked layouts, scrollable slides,
+     bigger tap targets, condensed type scale
+     ======================================================== */
+  @media (max-width: 900px) {
+    :root {
+      --pad-x: 24px;
+      --pad-y: 56px;
+    }
+
+    /* Let slide content scroll vertically on phones */
+    .slide {
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      justify-content: flex-start;
+      padding-bottom: 96px;
+    }
+    /* Keep these vertically centered — they're short */
+    .slide.s-title, .slide.s-moment, .slide.s-close,
+    .slide.s-oneliner, .slide.s-compound, .slide.s-build {
+      justify-content: center;
+      padding-top: 72px;
+    }
+
+    /* Chrome */
+    .meta { font-size: 10px; letter-spacing: 0.08em; }
+    .meta-tl { display: none; }
+    .meta-tr { top: 16px; right: 20px; }
+    .meta-br { bottom: 14px; right: 20px; }
+    .nav-arrows { bottom: 14px; gap: 10px; }
+    .nav-btn { width: 44px; height: 44px; font-size: 18px; }
+
+    /* Notes: full width */
+    .notes { width: 100%; padding: 56px 24px 40px; }
+    .panel-card { padding: 28px 24px; }
+
+    /* Shared headers */
+    .eyebrow { margin-bottom: 20px; font-size: 10px; }
+
+    /* Title */
+    .s-title .kicker { margin-bottom: 24px; font-size: 10px; }
+    .s-title h1 { font-size: clamp(56px, 17vw, 92px); letter-spacing: -0.03em; }
+    .s-title .sub { font-size: clamp(20px, 5vw, 28px); margin-top: 20px; }
+    .s-title .byline {
+      padding-top: 32px; flex-direction: column;
+      gap: 8px; align-items: flex-start; font-size: 10px;
+    }
+
+    /* Problem */
+    .s-problem h2 { font-size: clamp(32px, 8vw, 48px); margin-bottom: 32px; }
+    .split { grid-template-columns: 1fr; gap: 36px; }
+    .col ol li { font-size: 15px; padding: 8px 0; }
+    .cost-block { margin-top: 28px; }
+    .cost-block ul li { font-size: 14px; }
+
+    /* One-liner */
+    .s-oneliner .quote { font-size: clamp(30px, 8.5vw, 48px); }
+    .s-oneliner .sub { font-size: clamp(16px, 4vw, 20px); margin-top: 28px; }
+    .trio {
+      grid-template-columns: 1fr; gap: 12px;
+      margin-top: 40px; width: 100%; max-width: 340px;
+    }
+    .trio-card { padding: 20px 22px; }
+    .trio-card h4 { font-size: 20px; }
+
+    /* How it works */
+    .s-how h2 { font-size: clamp(32px, 8vw, 48px); margin-bottom: 12px; }
+    .s-how .lede { font-size: 15px; margin-bottom: 32px; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .step { padding: 20px 14px 20px 0; }
+    .step-num { font-size: 44px; margin-bottom: 6px; }
+    .step h4 { font-size: 17px; margin-bottom: 4px; }
+    .step p { font-size: 13px; }
+    .disclosure { margin-top: 28px; padding: 18px 20px; }
+    .disclosure p { font-size: 14px; }
+
+    /* Action demo */
+    .s-action h2 { font-size: clamp(28px, 7vw, 42px); margin-bottom: 8px; }
+    .s-action .lede { font-size: 15px; margin-bottom: 20px; }
+    .demo { grid-template-columns: 1fr; gap: 20px; }
+    .terminal-body { padding: 14px; font-size: 12px; }
+    .term-output { font-size: 13px; }
+    .beats { gap: 16px; }
+    .beat { gap: 14px; }
+    .beat h4 { font-size: 16px; }
+    .beat p { font-size: 13px; }
+    .action-footer { font-size: 16px; margin-top: 20px; }
+
+    /* Three types */
+    .s-types h2 { font-size: clamp(32px, 8vw, 48px); margin-bottom: 28px; }
+    .types-grid { grid-template-columns: 1fr; gap: 14px; }
+    .type-card { padding: 28px 24px; }
+    .type-card h3 { font-size: 28px; margin-bottom: 18px; }
+    .type-card ul li { font-size: 14px; }
+    .type-card .flourish { padding-top: 18px; font-size: 14px; }
+    .plan-line { margin-top: 28px; font-size: 10px; }
+
+    /* Good/bad */
+    .s-goodbad h2 { font-size: clamp(32px, 8vw, 48px); margin-bottom: 12px; }
+    .s-goodbad .lede { font-size: 15px; margin-bottom: 28px; }
+    .gb-grid { grid-template-columns: 1fr; gap: 0; }
+    .gb-cell { padding: 14px 0; }
+    .gb-cell .mark { min-width: 68px; font-size: 10px; }
+    .gb-cell .text { font-size: 14px; }
+
+    /* Team slides */
+    .s-team h2 { font-size: clamp(30px, 7.5vw, 44px); margin-bottom: 8px; }
+    .s-team .team-eyebrow { font-size: 10px; margin-bottom: 14px; }
+    .s-team .lede { font-size: 15px; margin-bottom: 28px; }
+    .team-grid { grid-template-columns: 1fr; gap: 12px; }
+    .team-card { padding: 22px 20px; }
+    .team-card h4 { font-size: 18px; margin-bottom: 8px; }
+    .team-card p { font-size: 13px; }
+    .team-footer { margin-top: 24px; padding: 16px 18px; font-size: 14px; }
+
+    /* Compounding */
+    .s-compound .quote { font-size: clamp(30px, 8.5vw, 48px); }
+    .compound-list { margin: 40px 0; gap: 22px; font-size: 16px; }
+    .compound-list .row {
+      grid-template-columns: 1fr; gap: 2px; text-align: center;
+    }
+    .compound-list .label, .compound-list .dest { text-align: center; }
+    .compound-list .arrow { display: none; }
+    .compound-closer { font-size: 17px; max-width: 32ch; }
+
+    /* Find your idea */
+    .s-find h2 { font-size: clamp(32px, 8vw, 48px); margin-bottom: 32px; }
+    .question { grid-template-columns: 56px 1fr; gap: 16px; padding: 20px 0; }
+    .question .q-num { font-size: 44px; }
+    .question .q-body h3 { font-size: 20px; margin-bottom: 6px; }
+    .question .q-body p { font-size: 14px; }
+
+    /* Starters */
+    .s-starters h2 { font-size: clamp(28px, 7vw, 40px); margin-bottom: 6px; }
+    .s-starters .lede { font-size: 15px; margin-bottom: 28px; }
+    .starter { grid-template-columns: 1fr; gap: 6px; padding: 16px 0; }
+    .starter .role { font-size: 11px; }
+    .starter .prompt { font-size: 14px; }
+    .starter .desc { font-size: 13px; }
+    .s-starters .closer { margin-top: 24px; font-size: 16px; }
+
+    /* SKILL.md */
+    .s-skillmd h2 { font-size: clamp(28px, 7vw, 42px); margin-bottom: 24px; }
+    .skillmd-grid { grid-template-columns: 1fr; gap: 16px; }
+    .tree { padding: 18px; font-size: 12px; }
+    .code-header { padding: 8px 14px; font-size: 10px; }
+    .code-body { font-size: 12px; padding: 14px 16px; }
+    .skillmd-footer { margin-top: 20px; font-size: 14px; padding: 16px 18px; }
+
+    /* Build (timer) */
+    .s-build h2 { font-size: clamp(64px, 20vw, 112px); }
+    .s-build .sub { font-size: clamp(18px, 5vw, 24px); margin-bottom: 36px; }
+    .build-rows { margin-bottom: 28px; max-width: 480px; }
+    .build-row { grid-template-columns: 92px 1fr; gap: 16px; padding: 14px 0; }
+    .build-row .when { font-size: 10px; }
+    .build-row h4 { font-size: 17px; }
+    .build-row p { font-size: 13px; margin-top: 2px; }
+    .timer-display { font-size: clamp(56px, 18vw, 88px); }
+    .timer-btn { padding: 12px 22px; min-height: 44px; font-size: 10px; }
+    .build-closer { margin-top: 24px; font-size: 16px; max-width: 32ch; }
+
+    /* Moment */
+    .s-moment h2 { font-size: clamp(52px, 17vw, 96px); margin-bottom: 32px; }
+    .s-moment .sub { font-size: clamp(18px, 5vw, 24px); }
+
+    /* Upload */
+    .s-upload h2 { font-size: clamp(28px, 7vw, 42px); margin-bottom: 28px; }
+    .upload-grid { grid-template-columns: 1fr; gap: 28px; }
+    .upload-step {
+      grid-template-columns: 44px 1fr;
+      grid-template-rows: auto auto;
+      gap: 2px 16px; padding: 16px 0;
+    }
+    .upload-step .n { grid-row: 1 / 3; align-self: center; font-size: 32px; }
+    .upload-step h4 { grid-column: 2; font-size: 17px; }
+    .upload-step p { grid-column: 2; font-size: 13px; }
+    .upload-side { gap: 14px; }
+    .side-card { padding: 18px 20px; }
+    .side-card p { font-size: 13px; }
+
+    /* Next (marketplace) */
+    .s-next h2 { font-size: clamp(30px, 7.5vw, 44px); margin-bottom: 12px; }
+    .s-next .lede { font-size: 15px; margin-bottom: 28px; }
+    .kit-grid { grid-template-columns: 1fr; gap: 14px; }
+    .kit-card { padding: 24px 22px; }
+    .kit-card h3 { font-size: 28px; margin-bottom: 14px; }
+    .kit-card .hero { font-size: 15px; margin-bottom: 18px; }
+    .kit-card ul li { font-size: 13px; line-height: 1.7; }
+    .kit-card .addon { font-size: 12px; padding-top: 16px; }
+    .next-footer { margin-top: 24px; padding: 16px 18px; font-size: 14px; }
+
+    /* Close */
+    .s-close h2 { font-size: clamp(48px, 15vw, 84px); }
+    .s-close h2 span:nth-child(2) { padding-left: 0.3em; }
+    .s-close h2 span:nth-child(3) { padding-left: 0.6em; }
+    .close-sub { font-size: 16px; margin-top: 28px; }
+    .close-foot {
+      flex-direction: column; gap: 10px;
+      align-items: flex-start; font-size: 10px; padding-top: 24px;
+    }
+  }
+
+  /* ========================================================
+     VERY NARROW (≤ 480px) — single-column everything
+     ======================================================== */
+  @media (max-width: 480px) {
+    :root {
+      --pad-x: 20px;
+      --pad-y: 44px;
+    }
+    .steps { grid-template-columns: 1fr; }
+    .step {
+      padding: 14px 0;
+      border-right: none;
+      border-bottom: 1px solid var(--line-soft);
+    }
+    .step:last-child { border-bottom: none; }
+    .build-row { grid-template-columns: 1fr; gap: 4px; padding: 12px 0; }
+    .build-row .when { margin-bottom: 2px; }
+    .upload-step { grid-template-columns: 36px 1fr; gap: 0 14px; }
+  }
+
+  /* ========================================================
+     PRINT — fall back to visible pages
+     ======================================================== */
+  @media print {
+    body { overflow: visible; background: white; color: black; }
+    .meta, .progress, .nav-arrows, .panel, .notes { display: none !important; }
+    .deck { position: static; }
+    .slide {
+      position: relative; opacity: 1; pointer-events: auto;
+      break-after: page;
+      page-break-after: always;
+      min-height: 100vh;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- PROGRESS -->
+<div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+
+<!-- META CHROME -->
+<div class="meta meta-tl">Claude Skills / Caseproof 2026</div>
+<div class="meta meta-tr"><span class="count-cur" id="slideCur">01</span> / <span id="slideTotal">19</span></div>
+<div class="meta meta-br" id="helpOpen">? / help</div>
+
+<!-- NAV ARROWS -->
+<div class="nav-arrows">
+  <button class="nav-btn" id="prevBtn" aria-label="Previous slide">←</button>
+  <button class="nav-btn" id="nextBtn" aria-label="Next slide">→</button>
+</div>
+
+<!-- ========================================================
+     DECK
+     ======================================================== -->
+<div class="deck" id="deck">
+
+  <!-- ===== SLIDE 1 : TITLE ===== -->
+  <section class="slide s-title active" data-slide="1">
+    <div class="kicker reveal">Caseproof Team Retreat · 2026</div>
+    <h1 class="reveal">Claude<br><em>Skills.</em></h1>
+    <div class="sub reveal">Stop re-explaining yourself.</div>
+    <div class="byline reveal">
+      <span class="names">Paul Carter &nbsp;·&nbsp; Seth Shoultes</span>
+      <span>45 minutes · workshop</span>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE 2 : PROBLEM ===== -->
+  <section class="slide s-problem" data-slide="2">
+    <div class="reveal"><div class="eyebrow">The problem we're solving</div></div>
+    <h2 class="reveal">Every chat, every time.</h2>
+    <div class="split reveal">
+      <div class="col col-before">
+        <div class="col-header">— Before skills</div>
+        <ol>
+          <li><span class="n">01</span><span>Open new chat</span></li>
+          <li><span class="n">02</span><span>Paste the same three paragraphs of context</span></li>
+          <li><span class="n">03</span><span>"Use this format, this tone, these fields…"</span></li>
+          <li><span class="n">04</span><span>Next chat — do it all again.</span></li>
+        </ol>
+        <div class="cost-block">
+          <div class="cost-label">The cost</div>
+          <ul>
+            <li>Inconsistent replies to customers</li>
+            <li>Time lost re-explaining</li>
+            <li>New hires ship work that doesn't match standards</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col col-after">
+        <div class="col-header">— With skills</div>
+        <ol>
+          <li><span class="n">01</span><span>Type your request</span></li>
+          <li><span class="n">02</span><span>Skill loads automatically</span></li>
+          <li><span class="n">03</span><span>Done. Your way. Every time.</span></li>
+        </ol>
+        <div class="cost-block">
+          <div class="cost-label">The win</div>
+          <ul>
+            <li>Consistent quality from everyone</li>
+            <li>New teammate = same output, day one</li>
+            <li>Your judgment, encoded once, used forever</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE 3 : ONE LINE ===== -->
+  <section class="slide s-oneliner" data-slide="3">
+    <div class="reveal"><div class="eyebrow">One line to remember</div></div>
+    <div class="quote reveal">A Skill is an <em>SOP</em> that Claude reads <em>before</em> it starts the task.</div>
+    <div class="sub reveal">It's your Notion doc for a new hire —<br>except the new hire is Claude.</div>
+    <div class="trio reveal">
+      <div class="trio-card">
+        <h4>Preferences</h4>
+        <p>Shape how Claude talks.</p>
+      </div>
+      <div class="trio-card">
+        <h4>Projects</h4>
+        <p>Give it context.</p>
+      </div>
+      <div class="trio-card highlighted">
+        <h4>Skills</h4>
+        <p>Teach it jobs.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE 4 : HOW IT WORKS ===== -->
+  <section class="slide s-how" data-slide="4">
+    <div class="reveal"><div class="eyebrow">How it works · four steps</div></div>
+    <h2 class="reveal">Upload, prompt, match, done.</h2>
+    <div class="lede reveal">Claude doesn't load every skill into every conversation. It only loads what's relevant. That's why dozens of skills work.</div>
+    <div class="steps reveal">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h4>Upload</h4>
+        <p>Zip your skill folder and upload it.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h4>Prompt</h4>
+        <p>You send a message to Claude.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h4>Match</h4>
+        <p>Claude scans skill descriptions — loads what fits.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h4>Done</h4>
+        <p>Task gets done your way. Every time.</p>
+      </div>
+    </div>
+    <div class="disclosure reveal">
+      <h5>Progressive disclosure</h5>
+      <p>Your code review skill stays asleep when you're writing an email. Your support skill stays asleep when you're drafting a PR. Only the right skill wakes up.</p>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE 5 : A SKILL IN ACTION (DEMO) ===== -->
+  <section class="slide s-action" data-slide="5">
+    <div class="reveal"><div class="eyebrow">A skill in action</div></div>
+    <h2 class="reveal">Watch what happens when I type one sentence.</h2>
+    <div class="lede reveal">I didn't paste any rules. I didn't explain brand voice, structure, or sign-off. The skill handled all of it, silently.</div>
+    <div class="demo reveal">
+      <div class="terminal">
+        <div class="terminal-bar"><span>claude.ai · support</span></div>
+        <div class="terminal-body" id="termBody">
+          <div class="term-line"><span class="term-prompt">&gt;</span> <span class="term-user" id="termInput"></span><span id="termCursor">▋</span></div>
+          <div class="term-line term-sys" id="termSys1" style="opacity:0">[system] scanning skill descriptions…</div>
+          <div class="term-line term-match" id="termSys2" style="opacity:0">[match] Support Reply Writer — loaded</div>
+          <div class="term-line term-sys" id="termSys3" style="opacity:0">[system] applying brand voice, empathy, sign-off</div>
+          <div class="term-output" id="termOut" style="opacity:0"></div>
+        </div>
+      </div>
+      <div class="beats">
+        <div class="beat" id="beat1"><div class="beat-dot"></div><div><h4>Scan</h4><p>Claude reads every skill description to find what fits.</p></div></div>
+        <div class="beat" id="beat2"><div class="beat-dot"></div><div><h4>Match</h4><p>Only the right skill loads — in this case, Support Reply Writer.</p></div></div>
+        <div class="beat" id="beat3"><div class="beat-dot"></div><div><h4>Apply</h4><p>Brand voice, empathy rules, sign-off format — all inherited.</p></div></div>
+        <div class="beat" id="beat4"><div class="beat-dot"></div><div><h4>Deliver</h4><p>A personalized, on-brand reply. No rules pasted.</p></div></div>
+      </div>
+    </div>
+    <div class="action-footer reveal">You never see the skill load. It just works.</div>
+  </section>
+
+  <!-- ===== SLIDE 6 : THREE TYPES ===== -->
+  <section class="slide s-types" data-slide="6">
+    <div class="reveal"><div class="eyebrow">Three types</div></div>
+    <h2 class="reveal">Three flavors. One discipline.</h2>
+    <div class="types-grid reveal">
+      <div class="type-card">
+        <div class="tag">Built-in</div>
+        <h3>Anthropic Skills</h3>
+        <ul>
+          <li>Excel · Word · PowerPoint · PDF</li>
+          <li>Always available</li>
+          <li>This deck was built with one</li>
+        </ul>
+        <div class="flourish">They just work.</div>
+      </div>
+      <div class="type-card">
+        <div class="tag">Marketplace</div>
+        <h3>Partner Skills</h3>
+        <ul>
+          <li>Notion · Figma · Atlassian</li>
+          <li>Pulled from the Skills Directory</li>
+          <li>Pair with MCP connectors</li>
+        </ul>
+        <div class="flourish">Extend the reach.</div>
+      </div>
+      <div class="type-card featured">
+        <div class="tag">You build these</div>
+        <h3>Custom Skills</h3>
+        <ul>
+          <li>A markdown file — no coding</li>
+          <li>Loads when it's relevant</li>
+          <li>If you can write a Google Doc, you can write a skill</li>
+        </ul>
+        <div class="flourish">This is where we live today.</div>
+      </div>
+    </div>
+    <div class="plan-line reveal">Available on every plan · Free · Pro · Max · Team · Enterprise</div>
+  </section>
+
+  <!-- ===== SLIDE 7 : GOOD vs BAD ===== -->
+  <section class="slide s-goodbad" data-slide="7">
+    <div class="reveal"><div class="eyebrow">Failure modes</div></div>
+    <h2 class="reveal">Good skills. Bad skills.</h2>
+    <div class="lede reveal">The four ways skills fail — and the fix for each.</div>
+    <div class="gb-grid reveal">
+      <div class="gb-cell gb-bad"><div class="mark">Vague</div><div class="text">"Helps with writing tasks." Fires on everything or nothing.</div></div>
+      <div class="gb-cell gb-good"><div class="mark">→ Better</div><div class="text">"Use when replying to a customer support ticket about billing, payments, or refunds."</div></div>
+
+      <div class="gb-cell gb-bad"><div class="mark">Kitchen sink</div><div class="text">One skill that does support AND marketing AND dev.</div></div>
+      <div class="gb-cell gb-good"><div class="mark">→ Better</div><div class="text">One skill. One job. Always.</div></div>
+
+      <div class="gb-cell gb-bad"><div class="mark">No examples</div><div class="text">Ten rules. Zero samples. Rules alone aren't enough.</div></div>
+      <div class="gb-cell gb-good"><div class="mark">→ Better</div><div class="text">One good example teaches more than ten rules.</div></div>
+
+      <div class="gb-cell gb-bad"><div class="mark">Never tested</div><div class="text">Upload and forget. You'll never know if it works.</div></div>
+      <div class="gb-cell gb-good"><div class="mark">→ Better</div><div class="text">Run three or four prompts. Watch what fires. Tighten.</div></div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE 8 : DEV SKILLS ===== -->
+  <section class="slide s-team" data-slide="8">
+    <div class="reveal"><div class="team-eyebrow">Real examples · engineering</div></div>
+    <h2 class="reveal">Dev team skills.</h2>
+    <div class="lede reveal">Four candidates that solve problems we actually have.</div>
+    <div class="team-grid reveal">
+      <div class="team-card">
+        <h4>Code Review Checklist</h4>
+        <p>Bakes in team standards. Security, performance, WordPress coding standards — every review, same checks.</p>
+      </div>
+      <div class="team-card">
+        <h4>Bug Report Writer</h4>
+        <p>Forces our template: product, steps to reproduce, expected vs. actual, environment. No more "it's broken."</p>
+      </div>
+      <div class="team-card">
+        <h4>Git Commit Message Writer</h4>
+        <p>Conventional commits, our prefix style, ticket numbers in the right spot.</p>
+      </div>
+      <div class="team-card">
+        <h4>API Doc Generator</h4>
+        <p>Consistent endpoint documentation generated directly from code.</p>
+      </div>
+    </div>
+    <div class="team-footer reveal">Pair a skill with Claude Code <strong>→</strong> automate PR reviews end to end.</div>
+  </section>
+
+  <!-- ===== SLIDE 9 : SUPPORT SKILLS ===== -->
+  <section class="slide s-team" data-slide="9">
+    <div class="reveal"><div class="team-eyebrow">Real examples · support</div></div>
+    <h2 class="reveal">Support team skills.</h2>
+    <div class="lede reveal">Where skills compound fastest — because consistency is everything.</div>
+    <div class="team-grid reveal">
+      <div class="team-card">
+        <h4>Support Reply Writer</h4>
+        <p>Brand voice, empathetic opener, correct sign-off. Every agent sounds like the same company.</p>
+      </div>
+      <div class="team-card">
+        <h4>Ticket Triage Summarizer</h4>
+        <p>Product, category, severity, suggested assignee. Great for shift handoffs.</p>
+      </div>
+      <div class="team-card">
+        <h4>Known Issue Responder</h4>
+        <p>References known-issue docs. Drafts the reply with the right workaround already included.</p>
+      </div>
+      <div class="team-card">
+        <h4>Escalation Writer</h4>
+        <p>Formats escalations so engineering gets exactly the fields they need. No back-and-forth.</p>
+      </div>
+    </div>
+    <div class="team-footer reveal">On our Team plan <strong>→</strong> deploy org-wide. Everyone sounds like us.</div>
+  </section>
+
+  <!-- ===== SLIDE 10 : GROWTH SKILLS ===== -->
+  <section class="slide s-team" data-slide="10">
+    <div class="reveal"><div class="team-eyebrow">Real examples · growth &amp; marketing</div></div>
+    <h2 class="reveal">Growth &amp; marketing skills.</h2>
+    <div class="lede reveal">Brand consistency without the bottleneck.</div>
+    <div class="team-grid reveal">
+      <div class="team-card">
+        <h4>Brand Voice Writer</h4>
+        <p>Tone guide, word list, do-not-use list — embedded. Drop the style guide in the references folder and Claude reads it every time.</p>
+      </div>
+      <div class="team-card">
+        <h4>Email Campaign Builder</h4>
+        <p>Subject line formula, preview text, CTA placement rules.</p>
+      </div>
+      <div class="team-card">
+        <h4>SEO Content Brief Writer</h4>
+        <p>Keyword targeting, structure, competitor awareness.</p>
+      </div>
+      <div class="team-card">
+        <h4>Launch Announcement Drafter</h4>
+        <p>Cross-channel consistency: blog, email, and social all sound like us.</p>
+      </div>
+    </div>
+    <div class="team-footer reveal">The <code>references/</code> folder is real <strong>→</strong> drop your style guide in there.</div>
+  </section>
+
+  <!-- ===== SLIDE 11 : COMPOUNDING WIN ===== -->
+  <section class="slide s-compound" data-slide="11">
+    <div class="reveal"><div class="eyebrow">The compounding win</div></div>
+    <div class="quote reveal">Skills turn your <em>individual judgment</em> into <em>team-wide consistency.</em></div>
+    <div class="compound-list reveal">
+      <div class="row">
+        <div class="label">Support lead's instincts</div>
+        <div class="arrow">→</div>
+        <div class="dest">In a skill</div>
+      </div>
+      <div class="row">
+        <div class="label">Dev lead's standards</div>
+        <div class="arrow">→</div>
+        <div class="dest">In a skill</div>
+      </div>
+      <div class="row">
+        <div class="label">Marketing's voice</div>
+        <div class="arrow">→</div>
+        <div class="dest">In a skill</div>
+      </div>
+    </div>
+    <div class="compound-closer reveal">New person joins Monday — same output as someone here three years.</div>
+  </section>
+
+  <!-- ===== SLIDE 12 : FIND YOUR IDEA ===== -->
+  <section class="slide s-find" data-slide="12">
+    <div class="reveal"><div class="eyebrow">Your turn · find your best idea</div></div>
+    <h2 class="reveal">Three questions.</h2>
+    <div class="questions">
+      <div class="question reveal">
+        <div class="q-num">01</div>
+        <div class="q-body">
+          <h3>What do you explain to Claude over and over?</h3>
+          <p>If you're pasting the same paragraph into new chats — that's a skill.</p>
+        </div>
+      </div>
+      <div class="question reveal">
+        <div class="q-num">02</div>
+        <div class="q-body">
+          <h3>What needs to look or sound a specific way?</h3>
+          <p>Templates, formats, voice. Consistency problems are skill problems.</p>
+        </div>
+      </div>
+      <div class="question reveal">
+        <div class="q-num">03</div>
+        <div class="q-body">
+          <h3>What would you write as an SOP for a new hire?</h3>
+          <p>If you'd put it in Notion for a human, Claude can follow the same instructions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE 13 : STARTER IDEAS ===== -->
+  <section class="slide s-starters" data-slide="13">
+    <div class="reveal"><div class="eyebrow">Starter ideas · pick one or bring your own</div></div>
+    <h2 class="reveal">If nothing's jumping out, start here.</h2>
+    <div class="starter-list">
+      <div class="starter reveal">
+        <div class="role">Dev</div>
+        <div>
+          <div class="prompt">"Write a PR description for this diff."</div>
+          <div class="desc">Our template, linked ticket, change summary, test steps.</div>
+        </div>
+      </div>
+      <div class="starter reveal">
+        <div class="role">Support</div>
+        <div>
+          <div class="prompt">"Reply to this support ticket."</div>
+          <div class="desc">Brand voice, empathy first, specific fix, correct sign-off.</div>
+        </div>
+      </div>
+      <div class="starter reveal">
+        <div class="role">Growth</div>
+        <div>
+          <div class="prompt">"Write a launch announcement for [feature]."</div>
+          <div class="desc">Blog tone, key benefits, CTA, cross-channel variants.</div>
+        </div>
+      </div>
+      <div class="starter reveal">
+        <div class="role">Ops / PM</div>
+        <div>
+          <div class="prompt">"Summarize this meeting."</div>
+          <div class="desc">Attendees, decisions, action items with owners, follow-up date.</div>
+        </div>
+      </div>
+    </div>
+    <div class="closer reveal">Pick the one that makes you groan when you do it manually.</div>
+  </section>
+
+  <!-- ===== SLIDE 14 : SKILL.md TEMPLATE ===== -->
+  <section class="slide s-skillmd" data-slide="14">
+    <div class="reveal"><div class="eyebrow">How to write a skill.md</div></div>
+    <h2 class="reveal">Two parts. Twelve lines. One job.</h2>
+    <div class="skillmd-grid reveal">
+      <div class="tree">
+<span class="folder">my-skill/</span>
+  <span class="file">SKILL.md</span>
+  <span class="dim">references/</span>  <span class="dim">← optional</span>
+  <span class="dim">├── style-guide.md</span>
+  <span class="dim">└── templates/</span>
+      </div>
+      <div class="code-blocks">
+        <div class="code-block">
+          <div class="code-header">Frontmatter · top of file</div>
+          <div class="code-body">---
+<span class="key">name</span>: <span class="str">Support Reply Writer</span>
+<span class="key">description</span>: <span class="str">&gt;</span>
+  <span class="str">Use when replying to a</span>
+  <span class="str">customer support ticket.</span>
+---</div>
+        </div>
+        <div class="code-block">
+          <div class="code-header">Body · plain markdown</div>
+          <div class="code-body"><span class="h">## Role</span>
+You are a support agent for Caseproof.
+
+<span class="h">## Rules</span>
+<span class="cm">1. Start with the customer's name</span>
+<span class="cm">2. Acknowledge the issue first</span>
+<span class="cm">3. Offer a specific fix</span>
+
+<span class="h">## Example</span>
+<span class="cm">Input:  [what the user types]</span>
+<span class="cm">Output: [what Claude produces]</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="skillmd-footer reveal">
+      <strong>Pro tip ·</strong> Don't write this from scratch. Describe your task to Claude and say "create a SKILL.md for this." It drafts, you edit. <em style="color:var(--amber);font-style:italic;">Use Claude to build your Claude skills.</em>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE 15 : BUILD (TIMER) ===== -->
+  <section class="slide s-build" data-slide="15">
+    <div class="reveal"><div class="eyebrow">Build your skill</div></div>
+    <h2 class="reveal">15 minutes.</h2>
+    <div class="sub reveal">Clock starts when you're ready.</div>
+    <div class="build-rows reveal">
+      <div class="build-row">
+        <div class="when">Min 1 – 2</div>
+        <div><h4>Pick your idea.</h4><p>One repetitive task from your role. If you're stuck, grab one from the starter ideas.</p></div>
+      </div>
+      <div class="build-row">
+        <div class="when">Min 3 – 10</div>
+        <div><h4>Write your SKILL.md.</h4><p>Description (trigger phrases) · at least three rules · one example output.</p></div>
+      </div>
+      <div class="build-row">
+        <div class="when">Min 11 – 15</div>
+        <div><h4>Share.</h4><p>What problem are you solving? Read your description line.</p></div>
+      </div>
+    </div>
+    <div class="timer-wrap reveal">
+      <div class="timer-display" id="timerDisplay">15:00</div>
+      <div class="timer-controls">
+        <button class="timer-btn" id="timerStart">Start</button>
+        <button class="timer-btn secondary" id="timerReset">Reset</button>
+      </div>
+    </div>
+    <div class="build-closer reveal">Goal: walk out of this room with one skill you can upload today.</div>
+  </section>
+
+  <!-- ===== SLIDE 16 : LET'S SEE IT WORK (MOMENT) ===== -->
+  <section class="slide s-moment" data-slide="16">
+    <div class="reveal"><div class="eyebrow">Let's see it work</div></div>
+    <h2 class="reveal">Twelve lines of <em>markdown.</em></h2>
+    <div class="sub reveal">Claude does the job the way <em>you</em> want.<br>Every time.</div>
+  </section>
+
+  <!-- ===== SLIDE 17 : UPLOAD & SHARE ===== -->
+  <section class="slide s-upload" data-slide="17">
+    <div class="reveal"><div class="eyebrow">Upload &amp; share · five steps</div></div>
+    <h2 class="reveal">Get it live in under a minute.</h2>
+    <div class="upload-grid">
+      <div class="upload-steps reveal">
+        <div class="upload-step"><div class="n">1</div><h4>Folder</h4><p>Named after your skill.</p></div>
+        <div class="upload-step"><div class="n">2</div><h4>SKILL.md</h4><p>Inside the folder (you just wrote this).</p></div>
+        <div class="upload-step"><div class="n">3</div><h4>Zip</h4><p>Right-click · Compress.</p></div>
+        <div class="upload-step"><div class="n">4</div><h4>Upload</h4><p>Claude.ai · avatar · Customize · Skills.</p></div>
+        <div class="upload-step"><div class="n">5</div><h4>Test</h4><p>Run a few prompts. Watch what fires. Iterate.</p></div>
+      </div>
+      <div class="upload-side reveal">
+        <div class="side-card gotcha">
+          <h5>— Gotcha</h5>
+          <p>Code Execution must be enabled.<br><code>Settings → Capabilities</code></p>
+          <p>If your skill won't fire, check this first.</p>
+        </div>
+        <div class="side-card team">
+          <h5>— Team plan</h5>
+          <p>An admin can push skills to the whole org.</p>
+          <p>Once yours is ready — we deploy it to everybody.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE 18 : MARKETPLACE ===== -->
+  <section class="slide s-next" data-slide="18">
+    <div class="reveal"><div class="eyebrow">One more thing · Caseproof plugin marketplace</div></div>
+    <h2 class="reveal">Beyond Claude.ai.</h2>
+    <div class="lede reveal">Everything we just built — those are skills for Claude.ai. We also have an internal plugin marketplace for Cursor and Claude Code.</div>
+    <div class="kit-grid reveal">
+      <div class="kit-card">
+        <h3>DevKit</h3>
+        <div class="hero">Point it at a GitHub issue. Full pipeline.</div>
+        <ul>
+          <li>Branch, implement, test, commit</li>
+          <li>Open PR, run code review</li>
+          <li>Watch CI, fix failures</li>
+        </ul>
+        <div class="addon">
+          <em>+ standalone skills:</em>
+          <code>commit</code> · <code>create-pr</code> · <code>coding-standards</code> · <code>multi-model review</code>
+        </div>
+      </div>
+      <div class="kit-card">
+        <h3>DesignKit</h3>
+        <div class="hero">This deck was built with DesignKit.</div>
+        <ul>
+          <li>Interviews you about your talk</li>
+          <li>Picks a rhetorical framework</li>
+          <li>ASCII mockups before generating</li>
+          <li>Exports to PowerPoint · Gamma · Canva</li>
+        </ul>
+        <div class="addon">
+          <em>Best for:</em> keynotes, retreat sessions, executive briefs.
+        </div>
+      </div>
+    </div>
+    <div class="next-footer reveal">Build a skill worth sharing beyond Claude.ai? <strong>Come find me or Thomas</strong> — we'll package it for the marketplace.</div>
+  </section>
+
+  <!-- ===== SLIDE 19 : CLOSING ===== -->
+  <section class="slide s-close" data-slide="19">
+    <div class="reveal"><div class="eyebrow">One takeaway</div></div>
+    <h2 class="reveal">
+      <span>Build the skill.</span>
+      <span>Test it.</span>
+      <span>Share the one <em>that works.</em></span>
+    </h2>
+    <div class="close-sub reveal">I'll be around the rest of the retreat.<br>Want help polishing yours? Grab me.</div>
+    <div class="close-foot reveal">
+      <span>docs.anthropic.com/skills · claude.ai/customize</span>
+      <em>Let's go build some skills.</em>
+    </div>
+  </section>
+
+</div>
+
+<!-- ========================================================
+     HELP PANEL
+     ======================================================== -->
+<div class="panel" id="helpPanel">
+  <div class="panel-card">
+    <h2>Keyboard shortcuts</h2>
+    <div class="shortcut-row"><span>Next slide</span><span class="kbd">→</span></div>
+    <div class="shortcut-row"><span>Previous slide</span><span class="kbd">←</span></div>
+    <div class="shortcut-row"><span>Next slide</span><span class="kbd">Space</span></div>
+    <div class="shortcut-row"><span>First slide</span><span class="kbd">Home</span></div>
+    <div class="shortcut-row"><span>Last slide</span><span class="kbd">End</span></div>
+    <div class="shortcut-row"><span>Speaker notes</span><span class="kbd">N</span></div>
+    <div class="shortcut-row"><span>Fullscreen</span><span class="kbd">F</span></div>
+    <div class="shortcut-row"><span>Close this</span><span class="kbd">Esc</span></div>
+  </div>
+</div>
+
+<!-- ========================================================
+     SPEAKER NOTES (from v2 script)
+     ======================================================== -->
+<aside class="notes" id="notesPanel">
+  <div class="notes-eyebrow">Speaker notes · press N to close</div>
+  <div id="notesContent"></div>
+</aside>
+
+<script>
+// =========================================================
+// NAVIGATION
+// =========================================================
+const slides = Array.from(document.querySelectorAll('.slide'));
+const total = slides.length;
+document.getElementById('slideTotal').textContent = String(total).padStart(2, '0');
+let current = 0;
+
+function go(idx) {
+  idx = Math.max(0, Math.min(total - 1, idx));
+  slides[current].classList.remove('active');
+  slides[idx].classList.add('active');
+  slides[idx].scrollTop = 0;
+  current = idx;
+  document.getElementById('slideCur').textContent = String(idx + 1).padStart(2, '0');
+  document.getElementById('progressBar').style.width = ((idx + 1) / total * 100) + '%';
+  updateNotes(idx);
+  if (idx === 4) runActionDemo(); // Slide 5 (0-indexed: 4)
+}
+
+document.getElementById('prevBtn').addEventListener('click', () => go(current - 1));
+document.getElementById('nextBtn').addEventListener('click', () => go(current + 1));
+
+document.addEventListener('keydown', (e) => {
+  // Don't capture keys in the timer/any input
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); go(current + 1); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); go(current - 1); }
+  else if (e.key === 'Home') { e.preventDefault(); go(0); }
+  else if (e.key === 'End') { e.preventDefault(); go(total - 1); }
+  else if (e.key === 'n' || e.key === 'N') { toggleNotes(); }
+  else if (e.key === 'f' || e.key === 'F') { toggleFullscreen(); }
+  else if (e.key === '?' || e.key === '/') { e.preventDefault(); toggleHelp(); }
+  else if (e.key === 'Escape') { closeAll(); }
+});
+
+// Click on sides of screen to navigate (but not on interactive elements)
+document.addEventListener('click', (e) => {
+  if (e.target.closest('button, .meta-br, .panel, .notes, a, .timer-btn')) return;
+  // Skip on touch devices — swipe handles this instead
+  if ('ontouchstart' in window) return;
+  const x = e.clientX / window.innerWidth;
+  if (x < 0.25) go(current - 1);
+  else if (x > 0.75) go(current + 1);
+});
+
+// =========================================================
+// TOUCH / SWIPE (mobile)
+// =========================================================
+let touchStartX = null;
+let touchStartY = null;
+document.addEventListener('touchstart', (e) => {
+  touchStartX = e.changedTouches[0].screenX;
+  touchStartY = e.changedTouches[0].screenY;
+}, { passive: true });
+
+document.addEventListener('touchend', (e) => {
+  if (touchStartX === null) return;
+  const dx = e.changedTouches[0].screenX - touchStartX;
+  const dy = e.changedTouches[0].screenY - touchStartY;
+  touchStartX = null;
+
+  // Ignore swipes inside drawers, panels, buttons, code blocks
+  if (e.target.closest('.notes, .panel, button, .timer-controls, .code-body, .terminal-body')) return;
+
+  // Only treat as horizontal swipe if the horizontal distance
+  // clearly exceeds vertical (otherwise it's a scroll)
+  if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+    if (dx < 0) go(current + 1);   // swipe left → next
+    else go(current - 1);          // swipe right → previous
+  }
+}, { passive: true });
+
+// =========================================================
+// HELP PANEL
+// =========================================================
+const helpPanel = document.getElementById('helpPanel');
+document.getElementById('helpOpen').addEventListener('click', toggleHelp);
+helpPanel.addEventListener('click', (e) => { if (e.target === helpPanel) toggleHelp(); });
+function toggleHelp() { helpPanel.classList.toggle('open'); }
+
+// =========================================================
+// SPEAKER NOTES (from v2 script, abbreviated)
+// =========================================================
+const NOTES = {
+  1: {
+    title: "Title — Open with the promise",
+    body: `<p>You have a task you've explained to Claude more than once. Maybe it's how to reply to a support ticket. Maybe it's how to format a commit message. Maybe it's that paragraph of context you paste into every new chat.</p><p><em>After today, you won't have to do that again.</em></p><p>One goal: you leave with something useful for Monday. Not someday. Monday. About a third of our time is you building your own.</p>`
+  },
+  2: {
+    title: "The Problem We're Solving",
+    body: `<p>Here's what we all do right now. You open a new chat. You paste in the same three paragraphs. Next chat — same thing. New teammate joins, they don't have your context, so their output looks different from yours.</p><p>The cost is real. Inconsistent replies going to customers. Time lost re-explaining. New hires shipping work that doesn't match our standards because nobody handed them the playbook.</p><p><em>Skills fix this.</em> One time, you write down how you want the job done. From then on, Claude just does it that way.</p>`
+  },
+  3: {
+    title: "One Line to Remember",
+    body: `<p>Here's the mental model I want you to walk out with: <em>A Skill is an SOP that Claude reads before it starts the task.</em></p><p>It's your Notion doc for a new hire, except the new hire is Claude.</p><p>Preferences shape how Claude talks. Projects give it context. <em>Skills teach it jobs.</em></p>`
+  },
+  4: {
+    title: "How It Works — 30 seconds",
+    body: `<p>Four steps. Upload. Prompt. Match. Done.</p><p>The key idea: Claude doesn't load every skill into every conversation. It only loads what's relevant. That's why you can have dozens of skills without it becoming a mess.</p>`
+  },
+  5: {
+    title: "A Skill In Action — LIVE DEMO",
+    body: `<p><em>[Live demo: show screen]</em></p><p>Watch this in real time. I already uploaded a Support Reply Writer skill. Now I'm going to type "reply to this support ticket from Jake about his payment failing."</p><p>I didn't paste any rules. I didn't tell Claude about our brand voice, or how to structure the reply, or how to sign off. The Skill loaded silently in the background and handled all of that.</p><p><em>Four steps. Every support reply now follows the same playbook.</em></p>`
+  },
+  6: {
+    title: "Three Types of Skills",
+    body: `<p>Three flavors. <em>Anthropic Skills</em> are built-in — Excel, Word, PowerPoint, PDF. They just work. This deck was built using one.</p><p><em>Partner Skills</em> come from Notion, Figma, Atlassian. Pull them from the Skills Directory.</p><p><em>Custom Skills</em> are where we live today. You write a markdown file. Claude loads it when it's relevant.</p><p>Works on every plan. Nobody's blocked.</p>`
+  },
+  7: {
+    title: "Good Skills vs. Bad Skills",
+    body: `<p><em>Vague description.</em> "Helps with writing tasks." Fires on everything or nothing. The description is how Claude decides whether to load your skill. Write it like a trigger.</p><p><em>Kitchen-sink skill.</em> One skill that does support AND marketing AND dev. Don't. One skill, one job.</p><p><em>No examples.</em> Rules alone aren't enough. It learns more from one good example than from ten rules.</p><p><em>Never tested.</em> Upload it, run three or four prompts, watch what happens.</p>`
+  },
+  8: {
+    title: "Dev Team — Thomas's slide",
+    body: `<p>Four candidates that solve problems we actually have. Code Review Checklist bakes in our team's standards. Bug Report Writer forces our template. Git Commit Message Writer follows conventional commits. API Doc Generator produces consistent docs.</p><p>Pair a Skill with Claude Code and you can automate PR reviews. <em>Thomas — that's one we should set up this quarter.</em></p>`
+  },
+  9: {
+    title: "Support Team — Where skills compound fastest",
+    body: `<p>Support is where skills compound the fastest because consistency is everything.</p><p>Support Reply Writer — our brand voice, empathetic opener, correct sign-off. Every agent sounds like the same company. Ticket Triage for handoffs. Known Issue Responder references our docs. Escalation Writer formats for engineering.</p><p>On our Team plan, we deploy these org-wide. <em>That's a big deal.</em></p>`
+  },
+  10: {
+    title: "Growth & Marketing — Vic's slide",
+    body: `<p>Brand consistency without the bottleneck.</p><p><em>Brand Voice Writer — Vic, this is yours.</em> Tone guide, word list, do-not-use list. Drop our actual style guide in the references folder and Claude reads it every time.</p><p>Email Campaign Builder. SEO Content Brief Writer. Launch Announcement Drafter.</p>`
+  },
+  11: {
+    title: "The Compounding Win — THE MOMENT",
+    body: `<p>Notice the pattern across all three teams? <em>Skills turn your individual judgment into team-wide consistency.</em></p><p>The support lead's instinct for how to reply — now in a skill. The dev lead's code review standards — in a skill. The marketing team's voice — in a skill.</p><p><em>New person joins Monday — they type the same short prompt and get the same quality output as someone who's been here three years.</em> That's the compounding win.</p><p><strong>Let this line breathe.</strong></p>`
+  },
+  12: {
+    title: "Your Turn — Three questions",
+    body: `<p>Time to build. Fifteen minutes. Here's how to find your best idea. Three questions:</p><p><em>One</em> — What do you explain to Claude over and over? If you're pasting the same paragraph, that's a skill.</p><p><em>Two</em> — What needs to look or sound a specific way? Consistency problems are skill problems.</p><p><em>Three</em> — What would you write as an SOP for a new hire?</p>`
+  },
+  13: {
+    title: "Starter Ideas — If you're stuck",
+    body: `<p>If nothing's jumping out: Dev — "Write a PR description for this diff." Support — "Reply to this ticket." Growth — "Write a launch announcement." Ops — "Summarize this meeting."</p><p><em>The one that makes you groan when you do it manually — that's the one.</em></p>`
+  },
+  14: {
+    title: "How to Write a SKILL.md",
+    body: `<p>Here's what goes in the file. Two parts: frontmatter (name + description) and body (role, rules, example).</p><p>The description is the most important field. It's how Claude decides whether to load your skill. Write it like you're telling Claude when to care.</p><p><em>Pro tip — don't write this from scratch.</em> Describe your task to Claude and say "create a SKILL.md for this." Use Claude to build your Claude skills.</p><p><strong>[Beat of silence. Let it land.]</strong></p>`
+  },
+  15: {
+    title: "Go — 15 Minutes (press Start)",
+    body: `<p>Clock starts now. <em>Click Start on the timer.</em></p><p><em>Min 1–2:</em> Pick your idea.</p><p><em>Min 3–10:</em> Write your SKILL.md. Description, 3 rules, 1 example. First draft — not perfect.</p><p><em>Min 11–15:</em> Share.</p><p><strong>At 5 min:</strong> "If you're stuck on the description, ask yourself: what would I literally type into Claude when I need this?"</p><p><strong>At 10 min:</strong> "Five minutes left."</p><p><strong>At 13 min:</strong> "Two minutes — who wants to share first?"</p>`
+  },
+  16: {
+    title: "Let's See It Work — Live demo #2",
+    body: `<p>After the sharing round, pick one person's skill — or use a pre-built backup.</p><p>Upload the skill to Claude. Type a prompt that should trigger it. Show the output.</p><p><em>Twelve lines of markdown — and Claude just did the job the way they wanted it done. Every time. That's the whole idea.</em></p>`
+  },
+  17: {
+    title: "How to Upload & Share",
+    body: `<p>Five steps. Folder. SKILL.md inside. Zip the folder. Upload to Claude.ai. Test with a few prompts.</p><p><em>One gotcha:</em> Code Execution must be enabled. Settings → Capabilities. If your skill won't fire, check that first.</p><p>On our Team plan, once we have skills worth sharing, an admin can push them to the whole org.</p>`
+  },
+  18: {
+    title: "What's Next — Marketplace",
+    body: `<p>Everything we just built — those are skills for Claude.ai. We also have an internal plugin marketplace for Cursor and Claude Code.</p><p><em>DevKit</em> — Thomas and the dev team, this is yours. Full pipeline from GitHub issue to merged PR.</p><p><em>DesignKit</em> — this deck was built with it. Say "I have a talk coming up," it interviews you, picks a framework, exports.</p><p>Build a skill worth sharing? Come find me or Thomas.</p>`
+  },
+  19: {
+    title: "One Takeaway — Close",
+    body: `<p><em>Build the skill. Test it. Share the one that works.</em></p><p>I'll be around the rest of the retreat. If you want help polishing yours and getting it uploaded — grab me.</p><p>Thanks everyone. Let's go build some skills.</p>`
+  }
+};
+
+const notesPanel = document.getElementById('notesPanel');
+function toggleNotes() { notesPanel.classList.toggle('open'); }
+function updateNotes(idx) {
+  const n = NOTES[idx + 1];
+  if (!n) return;
+  document.getElementById('notesContent').innerHTML = `<h3>${n.title}</h3>${n.body}`;
+}
+updateNotes(0);
+
+// =========================================================
+// CLOSE HANDLERS
+// =========================================================
+function closeAll() {
+  helpPanel.classList.remove('open');
+  notesPanel.classList.remove('open');
+}
+
+// =========================================================
+// FULLSCREEN
+// =========================================================
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  } else {
+    document.exitFullscreen().catch(() => {});
+  }
+}
+
+// =========================================================
+// SLIDE 5 — LIVE DEMO ANIMATION
+// =========================================================
+const demoPrompt = 'reply to this support ticket from Jake about his payment failing.';
+const demoReply = `Hi Jake,
+
+Thanks for reaching out — sorry to hear the payment didn't go through. Ninety percent of the time, this is one of two things: an expired card on file, or a fraud flag from your bank.
+
+Here's what to check first:
+  1. Log in to MemberPress and verify the card on file is current.
+  2. Try the payment again — most bank-side flags clear on a second attempt.
+
+If both fail, reply here and we'll dig deeper. You're not locked out — your subscription's active through the end of the cycle.
+
+— Caseproof Support`;
+
+let demoPlayed = false;
+function runActionDemo() {
+  if (demoPlayed) return;
+  demoPlayed = true;
+
+  const input = document.getElementById('termInput');
+  const cursor = document.getElementById('termCursor');
+  const sys1 = document.getElementById('termSys1');
+  const sys2 = document.getElementById('termSys2');
+  const sys3 = document.getElementById('termSys3');
+  const out = document.getElementById('termOut');
+  const beats = [document.getElementById('beat1'), document.getElementById('beat2'), document.getElementById('beat3'), document.getElementById('beat4')];
+
+  input.textContent = '';
+  sys1.style.opacity = '0';
+  sys2.style.opacity = '0';
+  sys3.style.opacity = '0';
+  out.style.opacity = '0';
+  out.textContent = '';
+  beats.forEach(b => b.classList.remove('lit'));
+
+  let i = 0;
+  function typeUser() {
+    if (i < demoPrompt.length) {
+      input.textContent += demoPrompt[i++];
+      setTimeout(typeUser, 28);
+    } else {
+      cursor.style.display = 'none';
+      setTimeout(() => {
+        sys1.style.transition = 'opacity 300ms';
+        sys1.style.opacity = '1';
+        beats[0].classList.add('lit');
+      }, 260);
+      setTimeout(() => {
+        sys2.style.transition = 'opacity 300ms';
+        sys2.style.opacity = '1';
+        beats[1].classList.add('lit');
+      }, 820);
+      setTimeout(() => {
+        sys3.style.transition = 'opacity 300ms';
+        sys3.style.opacity = '1';
+        beats[2].classList.add('lit');
+      }, 1340);
+      setTimeout(() => {
+        out.style.transition = 'opacity 300ms';
+        out.style.opacity = '1';
+        beats[3].classList.add('lit');
+        typeOutput();
+      }, 1900);
+    }
+  }
+
+  let j = 0;
+  function typeOutput() {
+    if (j < demoReply.length) {
+      out.textContent += demoReply[j++];
+      setTimeout(typeOutput, 8);
+    }
+  }
+
+  typeUser();
+}
+
+// =========================================================
+// SLIDE 15 — 15-MINUTE COUNTDOWN TIMER
+// =========================================================
+const TIMER_TOTAL = 15 * 60; // 900 seconds
+let timerRemaining = TIMER_TOTAL;
+let timerId = null;
+const timerDisplay = document.getElementById('timerDisplay');
+const timerStart = document.getElementById('timerStart');
+const timerReset = document.getElementById('timerReset');
+
+function formatTime(s) {
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+}
+function renderTimer() {
+  timerDisplay.textContent = formatTime(timerRemaining);
+  timerDisplay.classList.remove('warn', 'alert', 'done');
+  const elapsed = TIMER_TOTAL - timerRemaining;
+  if (timerRemaining === 0) timerDisplay.classList.add('done');
+  else if (elapsed >= 13 * 60) timerDisplay.classList.add('alert');   // 13:00+
+  else if (elapsed >= 10 * 60) timerDisplay.classList.add('warn');    // 10:00+
+}
+function startTimer() {
+  if (timerId) { // Pause
+    clearInterval(timerId);
+    timerId = null;
+    timerStart.textContent = 'Resume';
+    return;
+  }
+  timerStart.textContent = 'Pause';
+  timerId = setInterval(() => {
+    if (timerRemaining > 0) {
+      timerRemaining--;
+      renderTimer();
+    } else {
+      clearInterval(timerId);
+      timerId = null;
+      timerStart.textContent = 'Done';
+      timerStart.disabled = true;
+    }
+  }, 1000);
+}
+function resetTimer() {
+  if (timerId) { clearInterval(timerId); timerId = null; }
+  timerRemaining = TIMER_TOTAL;
+  timerStart.textContent = 'Start';
+  timerStart.disabled = false;
+  renderTimer();
+}
+timerStart.addEventListener('click', startTimer);
+timerReset.addEventListener('click', resetTimer);
+renderTimer();
+
+// =========================================================
+// (Hash-based deep linking removed — sandboxed iframes block
+//  history API in a way that can't be caught in JS.
+//  Navigation works via keyboard arrows, Space, Home/End,
+//  on-screen arrows, and side-click zones.)
+// =========================================================
+
+</script>
+
+</body>
+</html>
