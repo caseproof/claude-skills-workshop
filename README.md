@@ -14,9 +14,10 @@ Single-page HTML deck covering:
 - Packaging `.skill` files
 - Live demo: the `support-reply-writer` skill
 
-## Download the demo skill
+## Try the demo skill
 
-[`support-reply-writer.skill`](./support-reply-writer.skill) — the packaged skill file from the workshop. Upload it directly to Claude.
+- **Open in Claude:** https://claude.ai/customize/skills?selectedId=skill_01JsBMyQ71nc3q7eVPY9Zbcj
+- **Download the packaged skill:** [`support-reply-writer.skill`](./support-reply-writer.skill)
 
 ## Local preview
 
